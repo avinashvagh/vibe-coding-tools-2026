@@ -53,7 +53,7 @@ The term was coined by Andrej Karpathy in 2025 and has since exploded into a $2B
 ## 🧭 Find Your Tool in 30 Seconds
 
 **Building with Laravel / PHP?**
-→ ✅ [LaraCopilot](03-laravel-ai-tools.md) — the only Laravel-native AI full-stack builder
+→ [LaraCopilot](03-laravel-ai-tools.md) — the only Laravel-native AI full-stack builder
 
 **Need to validate an idea before building?**
 → [Rocket.new](01-vibe-coding-builders.md) — research + build + competitive intelligence in one
