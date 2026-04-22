@@ -12,7 +12,7 @@
 | **Output** | Full generated application | Suggestions, completions, edits |
 | **Who uses it** | Founders, makers, non-technical users | Professional developers |
 | **Best for** | New projects from scratch | Ongoing development work |
-| **Examples** | Lovable, Bolt.new, LaraCopilot | Cursor, GitHub Copilot |
+| **Examples** | Lovable, Bolt.new, LaraCopilot | Cursor, GitHub Copilot, Claude Code, Codex |
 
 If you already have a codebase and want AI to help you move faster inside it — that's where code assistants shine. If you want to generate an entire app from a prompt, see [Vibe Coding Builders](01-vibe-coding-builders.md).
 
@@ -24,6 +24,8 @@ If you already have a codebase and want AI to help you move faster inside it —
 |------|----------|-----------|-----------|
 | [Cursor](#-cursor) | Deep codebase understanding, agentic multi-file editing | ✅ Hobby tier | $20/mo |
 | [GitHub Copilot](#-github-copilot) | IDE integration, enterprise adoption, broad language support | ✅ 2K completions/mo | $10/mo |
+| [Claude Code](#-claude-code) | Agentic CLI, complex multi-step tasks, terminal + file system access | ❌ API costs | Usage-based |
+| [OpenAI Codex](#-openai-codex) | Cloud-based async agent, parallel tasks, GitHub PR automation | ❌ API costs | Usage-based |
 
 ---
 
@@ -128,15 +130,20 @@ Cursor works with PHP and Laravel, but the experience is **generic, not native**
 
 User feedback from the Laravel community consistently highlights this gap: Cursor knows PHP, but it doesn't deeply know *Laravel*. For framework-specific generation and scaffolding, dedicated tools like [LaraCopilot](03-laravel-ai-tools.md) fill the gap Cursor leaves.
 
+**Tips for better Laravel results in Cursor:**
+- Create a `.cursorrules` file in your repo root describing your Laravel version, Livewire vs Inertia preference, coding standards, and Eloquent patterns — Cursor will follow them across every suggestion
+- Use `@codebase` to ask "where is authentication handled?" or "find all places we query the users table" — it maps your whole Laravel project
+- For complex Artisan commands or service providers, describe the intent in a comment first, then let Cursor fill in the implementation
+
 ---
 
 ### Who Should Use Cursor
 
-→ **Professional developers** working on existing codebases who want the fastest AI-assisted workflow  
-→ **Engineering teams** who need enterprise-grade security and centralized billing  
-→ **Polyglot developers** who work across multiple languages and frameworks  
-→ **Anyone doing complex refactors** where multi-file agentic editing saves hours  
-→ **Teams already using VS Code** — migration is nearly frictionless  
+→ **Professional developers** working on existing codebases who want the fastest AI-assisted workflow
+→ **Engineering teams** who need enterprise-grade security and centralized billing
+→ **Polyglot developers** who work across multiple languages and frameworks
+→ **Anyone doing complex refactors** where multi-file agentic editing saves hours
+→ **Teams already using VS Code** — migration is nearly frictionless
 
 > **Bottom line:** Cursor is the most powerful AI code editor available and the market has validated it at $2B+ ARR. If you have an existing codebase and want AI deeply integrated into your development workflow, it's the default choice. Its PHP/Laravel support is functional but generic — developers who need deep Laravel intelligence should supplement with a framework-specific tool.
 
@@ -243,20 +250,260 @@ GitHub Copilot's PHP and Laravel support has a **well-documented quality problem
 
 This is a training data problem — PHP and Laravel occupy a smaller slice of Copilot's training corpus than JavaScript and Python. The gap has narrowed over time but remains noticeable to experienced Laravel developers.
 
-For teams heavily invested in Laravel, this is a meaningful limitation. Pairing Copilot with a Laravel-native tool for app generation and scaffolding tasks addresses the gap.
+**Tips for better Laravel results in GitHub Copilot:**
+- Add a `copilot-instructions.md` file in your `.github` folder to tell Copilot your Laravel version, preferred patterns, and team conventions
+- Copilot's Laravel suggestions can lag behind current versions — always check suggestions against [laravel.com/docs](https://laravel.com/docs)
+- Use Copilot Chat to explain unfamiliar parts of a Laravel codebase — it's better at explaining code than generating complex Laravel-specific patterns
 
 ---
 
 ### Who Should Use GitHub Copilot
 
-→ **Enterprise developers** who need compliance, audit logs, and IP indemnification  
-→ **Teams already in the GitHub ecosystem** who want AI in PRs, issues, and code review  
-→ **Individual developers** on a budget — the $10/mo Pro plan is the best value in AI coding assistance  
-→ **Polyglot teams** working across many languages who want consistent AI support everywhere  
-→ **Developers in JetBrains IDEs** — Copilot has better JetBrains support than Cursor  
-→ **Part-time developers** — the generous free tier (2K completions/mo) is genuinely useful  
+→ **Enterprise developers** who need compliance, audit logs, and IP indemnification
+→ **Teams already in the GitHub ecosystem** who want AI in PRs, issues, and code review
+→ **Individual developers** on a budget — the $10/mo Pro plan is the best value in AI coding assistance
+→ **Polyglot teams** working across many languages who want consistent AI support everywhere
+→ **Developers in JetBrains IDEs** — Copilot has better JetBrains support than Cursor
+→ **Part-time developers** — the generous free tier (2K completions/mo) is genuinely useful
 
 > **Bottom line:** GitHub Copilot is the safe, default choice for AI coding assistance — widely adopted, well-priced, and deeply integrated with GitHub. Its PHP/Laravel suggestions lag behind current conventions, which is a real limitation for the Laravel ecosystem. For teams that live in GitHub and need enterprise compliance, it's hard to displace.
+
+---
+
+## 🟠 Claude Code
+
+**Anthropic's agentic coding CLI — runs in your terminal, owns your whole codebase.**
+
+| | |
+|---|---|
+| **Website** | [claude.ai/code](https://claude.ai/code) |
+| **What it does** | Agentic coding CLI — reads your entire codebase, writes and edits files, runs terminal commands, executes complex multi-step engineering tasks autonomously |
+| **Where it runs** | Local terminal (+ VS Code extension, JetBrains plugin) |
+| **Free Plan** | ❌ API costs apply |
+| **Pricing** | Usage-based via Anthropic API · Claude Max $100/mo · Claude Max Pro $200/mo |
+| **Funding** | Anthropic: $7.3B+ raised; $61.5B valuation (2025) |
+| **Model** | Claude Sonnet 4 / Claude Opus 4 |
+
+---
+
+### Background
+
+Claude Code is Anthropic's answer to the question: what if your AI assistant had full access to your terminal, your file system, and your entire project — and could just *do things*? Launched in 2025 and rapidly adopted by developers who needed more than autocomplete, Claude Code operates as a true software engineering agent rather than a suggestion engine.
+
+Where Cursor is an editor and Copilot is a plugin, Claude Code is a **CLI-first agent** — it runs wherever your terminal runs, which means it works inside any IDE, any environment, and any stack without a new app to install or configure.
+
+---
+
+### Core Features
+
+#### Full File System Access
+Claude Code doesn't just read your open files — it reads, writes, creates, and deletes files across your entire project. Ask it to refactor a folder, rename a model, or reorganize your directory structure and it handles everything, not just the file you have open.
+
+#### Terminal Execution
+Claude Code runs shell commands directly — `php artisan migrate`, `composer install`, `npm run build`, test suites, git commands. It sees the output, interprets errors, and fixes them autonomously. This is the key differentiator from editor-based tools: it has a feedback loop with your actual running code.
+
+#### Agentic Multi-Step Tasks
+Give Claude Code a high-level task and it breaks it down, plans the steps, executes them in sequence, checks its own output, and reports back. It doesn't ask for permission on every micro-decision — it works, then shows you what it did.
+
+Example: *"Add a subscription billing system using Laravel Cashier with Stripe"* — Claude Code will install the package, run migrations, scaffold the controllers, update routes, and write the tests, then summarize what it built.
+
+#### Git Integration
+Claude Code reads your git history, understands what changed and when, creates commits with meaningful messages, manages branches, and can diff changes before committing. It understands your project's evolution, not just its current state.
+
+#### MCP Support (Model Context Protocol)
+Claude Code connects to external tools and services via MCP — databases, APIs, internal tools, documentation sources. This makes it extensible far beyond what's in your codebase.
+
+#### IDE Integrations
+- **VS Code extension** — use Claude Code inside VS Code without switching to a terminal
+- **JetBrains plugin** — native support for PhpStorm, IntelliJ, WebStorm, and all JetBrains IDEs
+- **Terminal** — works in any terminal; no IDE required
+
+---
+
+### Pricing
+
+| Plan | Price | Best For | Key Limits |
+|------|-------|----------|------------|
+| API (Pay-as-you-go) | ~$3–$15 / M tokens | Occasional use, teams billing per project | Billed by usage |
+| Claude Max | $100/mo | Daily heavy users | High usage cap for individuals |
+| Claude Max Pro | $200/mo | Power users, full-time AI coding | Highest available usage cap |
+| API Enterprise | Custom | Teams at scale | Volume pricing, SLAs, data agreements |
+
+> 💡 For moderate use (a few hours/day), the API pay-as-you-go is cost-effective. Developers using Claude Code as their primary coding workflow are better served by the Max plan.
+
+---
+
+### Strengths
+
+- **Best reasoning on complex tasks** — Claude's strengths in multi-step reasoning translate directly to engineering tasks that require planning before coding
+- **Full terminal + file system access** — not limited to open files; operates across your entire project
+- **Artisan-aware** — runs `php artisan` commands, reads the output, fixes errors automatically
+- **Works in any IDE** — terminal-first means no editor lock-in; the VS Code and JetBrains plugins add native IDE experience on top
+- **Git-native** — understands your project history, not just its current state
+- **MCP extensibility** — connects to external tools, APIs, and services
+- **Strong at refactoring** — particularly good at large-scale structural changes across many files
+
+### Limitations
+
+- **Usage-based cost** — can add up on large or complex tasks; requires monitoring for teams
+- **CLI comfort required** — terminal-first experience is a barrier for developers unfamiliar with CLI workflows
+- **No built-in GUI** — the IDE plugins help, but the core experience is terminal-based
+- **Newer to market** — less community knowledge, fewer tutorials, and fewer established workflows than Cursor or Copilot
+- **No Laravel-native training** — like the others, it's a general-purpose tool; it handles PHP/Laravel well due to strong reasoning, but it's not purpose-built for the stack
+
+### Laravel / PHP Support
+
+Claude Code handles Laravel better than most general-purpose tools — not because it has Laravel-specific training, but because **its reasoning quality is high enough to follow context and conventions** when you give it the right instructions.
+
+In practice, when you tell Claude Code your stack upfront, it produces idiomatic Laravel code: proper Eloquent relationships, correct service provider registration, Artisan command structure, and Blade/Livewire patterns.
+
+**Tips for better Laravel results in Claude Code:**
+- Tell Claude Code your exact stack upfront in every session: *"This is a Laravel 11 app using Livewire 3, Filament 3, and MySQL. Follow PSR-12 and Laravel conventions."* — it carries this context through the entire session
+- Use it for complex refactors: *"Refactor the UserService to use Laravel Actions pattern"* — Claude Code handles multi-file changes well
+- Great for writing tests: *"Write feature tests for the checkout flow using Laravel's HTTP testing helpers"*
+- Let it run Artisan: *"Create a new Eloquent model for Invoice with migration, factory, and seeder"* — it runs the commands and fills in the logic
+
+---
+
+### Who Should Use Claude Code
+
+→ **Developers who want terminal-first AI** without switching to a new editor
+→ **JetBrains / PhpStorm users** — native plugin gives full Claude Code power inside your existing IDE
+→ **Teams doing large refactors** — Claude's planning ability shines on multi-file structural changes
+→ **Laravel developers** who want a general-purpose AI agent that can run Artisan and follow Laravel conventions with the right prompting
+→ **Anyone who wants to run tests and fix failures automatically** — the terminal loop (run test → see failure → fix → rerun) is where Claude Code excels
+
+> **Bottom line:** Claude Code is the most capable agentic CLI available — particularly strong on complex reasoning tasks and multi-step engineering work. Its terminal-first design means it works everywhere without editor lock-in. PHP/Laravel support is good with proper context-setting, not native. The Max plan pricing makes it practical for full-time use.
+
+---
+
+## ⬛ OpenAI Codex
+
+**The cloud-based coding agent that works while you sleep.**
+
+| | |
+|---|---|
+| **Website** | [platform.openai.com/codex](https://platform.openai.com/codex) |
+| **What it does** | Cloud-based agentic coding agent — clones your repo in an isolated sandbox, autonomously completes tasks, opens PRs, all without touching your local machine |
+| **Where it runs** | Cloud sandbox (remote) — not on your local machine |
+| **Free Plan** | ❌ API costs apply |
+| **Pricing** | Usage-based via OpenAI API · ChatGPT Pro $200/mo (limited Codex access included) |
+| **Funding** | OpenAI: $6.6B raised in 2024; $157B valuation |
+| **Model** | codex-1 (OpenAI o3-based) |
+
+---
+
+### Background
+
+OpenAI's Codex agent (launched April 2025 — distinct from the original 2021 Codex model used by GitHub Copilot) represents a fundamentally different approach to AI coding assistance: **fully remote, fully sandboxed, fully async**.
+
+Where every other tool in this category runs on your machine or in your editor, Codex runs in OpenAI's cloud. It clones your repository, does its work in an isolated environment, and returns results — usually in the form of a pull request — without any local execution. The implications are significant: you can kick off multiple tasks in parallel, walk away, and review finished PRs when you return.
+
+---
+
+### Core Features
+
+#### Cloud Sandbox Execution
+Every Codex task runs in an isolated cloud environment. OpenAI provisions a fresh VM, clones your repo, installs dependencies, executes the task, and tears down the environment when done. Nothing runs on your local machine — there's no risk of a rogue command touching your system.
+
+This also means Codex can work on tasks that would block your local workflow. Start a large refactor, close your laptop, and find a PR ready for review in the morning.
+
+#### Parallel Task Execution
+The cloud-based architecture enables something local tools can't match: **true parallelism**. You can run multiple Codex tasks simultaneously — fix a bug, write a feature, and update tests all at the same time — because each runs in its own sandbox.
+
+This is Codex's clearest advantage over Cursor and Claude Code, both of which are inherently sequential on a local machine.
+
+#### GitHub-Native Workflow
+Codex is built around the GitHub PR workflow from the ground up:
+- Reads GitHub Issues as task inputs
+- Creates branches automatically
+- Commits with meaningful messages
+- Opens pull requests with detailed descriptions of changes made
+- Integrates with your existing PR review process
+
+If your team lives in GitHub Issues and PRs, Codex fits into that workflow without any additional tooling.
+
+#### ChatGPT Integration
+Codex is accessible via ChatGPT Pro and the OpenAI platform, making it available to teams already paying for OpenAI's ecosystem. No separate account or billing to manage.
+
+#### Task History & Audit Trail
+Every Codex task produces a detailed log of what the agent did — files read, commands run, decisions made, changes applied. Full transparency into the agent's reasoning, useful for code review and debugging agent behavior.
+
+---
+
+### Pricing
+
+| Plan | Price | Best For | Key Limits |
+|------|-------|----------|------------|
+| ChatGPT Pro | $200/mo | Individuals wanting Codex access bundled | Limited Codex tasks included |
+| API (Pay-as-you-go) | Model-dependent | Teams billing by task | Billed per token/task |
+| Enterprise | Custom | Large teams, compliance needs | Volume pricing, SLAs, data agreements |
+
+---
+
+### Strengths
+
+- **Fully async** — kick off tasks, do other work, review PRs later; doesn't block your local workflow
+- **True parallel execution** — run multiple tasks simultaneously, impossible with local tools
+- **No local setup or execution risk** — nothing touches your machine; ideal for security-conscious teams
+- **GitHub-native** — built around the Issue → Branch → PR workflow teams already use
+- **Audit trail** — full log of every action the agent took, useful for review and compliance
+- **Scales independently** — adding more concurrent tasks doesn't slow your machine
+
+### Limitations
+
+- **No local environment access** — can't read your `.env`, connect to your local database, or run against local services; tasks must be self-contained
+- **Higher latency** — cloud round-trips and sandbox provisioning add time versus local tools; not for quick, interactive tasks
+- **Less flexible** — best for well-scoped, clearly defined tasks; open-ended exploration is harder without an interactive feedback loop
+- **Newer tooling** — less community knowledge and fewer established workflows than Cursor or Copilot
+- **Cost scales with task volume** — parallel execution is powerful but each parallel task costs separately
+- **No PHP/Laravel native support** — generic tool that works with any language; no Laravel-specific intelligence
+
+### Laravel / PHP Support
+
+Codex works with PHP and Laravel in its cloud sandbox — it can install Composer dependencies, run migrations, and generate Laravel code. Because tasks run remotely, it's best suited for **self-contained Laravel tasks** that don't require a connection to your local database or `.env` secrets.
+
+**Tips for better Laravel results in OpenAI Codex:**
+- Add an `AGENTS.md` file to your repo root describing your Laravel version, stack choices, and coding conventions — Codex reads this automatically before starting any task
+- Use it for tasks that produce clear, reviewable output: new feature modules, additional tests, new API endpoints
+- Avoid tasks that require your local database state or `.env` secrets — the sandbox doesn't have access to these
+- Great for generating boilerplate: migrations, seeders, factories, resource controllers, Form Request classes
+
+---
+
+### Who Should Use OpenAI Codex
+
+→ **Teams with async workflows** who want to queue up tasks and review PRs rather than interact in real time
+→ **Teams already paying for ChatGPT Pro** — Codex access is bundled at no additional charge
+→ **Security-conscious organizations** — nothing executes on developer machines; full sandbox isolation
+→ **Teams running many parallel tasks** — the only tool in this category with true parallel execution
+→ **GitHub-first teams** — if your workflow is Issue → PR → Merge, Codex fits in without friction
+
+> **Bottom line:** OpenAI Codex offers a genuinely different model for AI coding assistance — async, parallel, and fully cloud-based. It's not a replacement for interactive tools like Cursor or Claude Code; it's a complement for teams who want to queue up well-defined tasks and review the output. PHP/Laravel support is functional with proper `AGENTS.md` setup, not native.
+
+---
+
+## 📊 Full Comparison — All Four Tools
+
+| Dimension | Cursor | GitHub Copilot | Claude Code | OpenAI Codex |
+|-----------|--------|----------------|-------------|--------------|
+| **Type** | AI code editor | IDE extension | Agentic CLI | Cloud agent |
+| **Where it runs** | Local (VS Code fork) | Inside your IDE | Local terminal | Cloud sandbox |
+| **Laravel Native** | ⚠️ Generic | ⚠️ Generic (outdated) | ⚠️ Generic | ⚠️ Generic |
+| **Full App Generation** | ❌ No | ❌ No | ❌ No | ❌ No |
+| **Autocomplete** | ✅ Best in class | ✅ Very good | ❌ No | ❌ No |
+| **Multi-file editing** | ✅ Yes | ✅ Copilot Edits | ✅ Yes | ✅ Yes |
+| **Terminal / CLI access** | ❌ No | ❌ No | ✅ Yes (local) | ✅ Yes (cloud) |
+| **Parallel tasks** | ❌ No | ❌ No | ❌ No | ✅ Yes |
+| **Async / background work** | ❌ No | ⚠️ PR agent only | ❌ No | ✅ Yes |
+| **GitHub Integration** | ✅ Yes | ✅ Native | ✅ Yes | ✅ Native |
+| **Codebase context depth** | ✅ Deep indexing | ⚠️ Workspace indexing | ✅ Full file system | ✅ Full repo clone |
+| **IDE agnostic** | ❌ Own editor | ✅ All major IDEs | ✅ Terminal + plugins | ✅ Cloud / any |
+| **JetBrains / PhpStorm** | ❌ No | ✅ Yes | ✅ Plugin | ✅ Via API |
+| **Self-hosted option** | ✅ Yes | ❌ No | ❌ No | ❌ No |
+| **Free plan** | ✅ Hobby tier | ✅ 2K completions/mo | ❌ API costs | ❌ API costs |
+| **Predictable monthly cost** | ✅ Yes | ✅ Yes | ⚠️ Max plan | ⚠️ ChatGPT Pro |
+| **Valuation** | $29.3B | Microsoft / GitHub | $61.5B (Anthropic) | $157B (OpenAI) |
 
 ---
 
@@ -278,8 +525,6 @@ For teams heavily invested in Laravel, this is a meaningful limitation. Pairing 
 | **Self-hosted option** | ✅ | ❌ |
 | **ARR** | $2B+ | N/A (Microsoft) |
 
-### The Verdict
-
 **Choose Cursor if:** You want the most powerful AI coding experience, work primarily in VS Code, and do complex multi-file tasks and refactors regularly.
 
 **Choose GitHub Copilot if:** You need IDE flexibility (especially JetBrains), live in the GitHub ecosystem, want the lowest price point, or need enterprise compliance without switching editors.
@@ -288,16 +533,43 @@ For teams heavily invested in Laravel, this is a meaningful limitation. Pairing 
 
 ---
 
+## 📊 Claude Code vs. OpenAI Codex — Head to Head
+
+| Dimension | Claude Code | OpenAI Codex |
+|-----------|-------------|--------------|
+| **Interaction style** | Interactive, real-time | Async, background |
+| **Execution environment** | Local machine | Cloud sandbox |
+| **Parallel tasks** | ❌ Sequential | ✅ Multiple simultaneous |
+| **Terminal feedback loop** | ✅ Immediate | ⚠️ Delayed (cloud round-trip) |
+| **IDE integration** | ✅ VS Code + JetBrains plugins | ⚠️ Via API / ChatGPT UI |
+| **Local env / .env access** | ✅ Full access | ❌ Sandbox only |
+| **Best task type** | Complex interactive refactors | Well-scoped async tasks |
+| **Pricing model** | Usage-based / Max plan | Usage-based / ChatGPT Pro |
+| **GitHub PR workflow** | ✅ Yes | ✅ Native |
+
+**Choose Claude Code if:** You want interactive, real-time agentic coding with full access to your local environment, terminal, and Artisan commands.
+
+**Choose OpenAI Codex if:** You want to queue up tasks and review PRs asynchronously, run multiple tasks in parallel, or keep all execution off your local machine.
+
+---
+
 ## 🔧 How These Fit with Laravel Development
 
-Both Cursor and GitHub Copilot work with PHP and Laravel — but neither is optimized for it. They're general-purpose tools that happen to support PHP, not Laravel-native tools.
+All four tools work with PHP and Laravel — but none are optimized for it. They're general-purpose tools that support PHP; they're not Laravel-native.
 
 For Laravel developers, the practical workflow often looks like:
 
-1. **LaraCopilot** — for generating new features, modules, and apps from plain English prompts (Laravel-native output)
-2. **Cursor or Copilot** — for day-to-day coding assistance inside the generated codebase
+```
+New app / feature scaffold  →  LaraCopilot (Laravel-native output)
+          ↓
+Day-to-day coding            →  Cursor or GitHub Copilot (inline assistance)
+          ↓
+Complex multi-step tasks     →  Claude Code (terminal agent, runs Artisan)
+          ↓
+Background / async tasks     →  OpenAI Codex (PR-based, parallel execution)
+```
 
-This isn't a gap in Cursor or Copilot's design — they're built for every language. It's simply that framework-specific depth requires a dedicated tool. See [Laravel AI Tools](03-laravel-ai-tools.md) for the full picture.
+This isn't a gap in these tools' design — they're built for every language. Framework-specific depth requires a dedicated tool. See [Laravel AI Tools](03-laravel-ai-tools.md) for the full picture.
 
 ---
 
